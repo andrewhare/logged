@@ -1,55 +1,73 @@
 package logged
 
 import (
-	"bufio"
 	"encoding/json"
+	"fmt"
 	"io"
+	"time"
 )
 
+const (
+	Info  = "info"
+	Debug = "debug"
+)
+
+type Data map[string]interface{}
+
 type Logger interface {
-	Info(message string, data map[string]string)
-	Debug(message string, data map[string]string)
+	Info(message string, data Data)
+	Debug(message string, data Data)
 }
 
-type logger struct {
-	*json.Encoder
-	defaults map[string]string
-}
-
-type entry struct {
-	Level   string            `json:"level"`
-	Message string            `json:"message"`
-	Data    map[string]string `json:"data,omitempty"`
-}
-
-func (l *logger) Info(message string, data map[string]string) {
-	l.write("info", message, data)
-}
-
-func (l *logger) Debug(message string, data map[string]string) {
-	l.write("debug", message, data)
-}
-
-func (l *logger) write(level, message string, data map[string]string) {
-	e := &entry{
-		Level:   level,
-		Message: message,
-		Data:    l.allData(data),
-	}
-
-	if err := l.Encode(e); err != nil {
-		// what?
-	}
-}
-
-func NewLogger(w io.Writer, defaults map[string]string) Logger {
+func New(w io.Writer, defaults Data) Logger {
 	return &logger{
-		Encoder:  json.NewEncoder(bufio.NewWriter(w)),
+		Encoder:  json.NewEncoder(w),
 		defaults: defaults,
 	}
 }
 
-func (l *logger) allData(data map[string]string) map[string]string {
+type logger struct {
+	*json.Encoder
+	defaults Data
+}
+
+type entry struct {
+	Level     string    `json:"level"`
+	Timestamp time.Time `json:"timestamp"`
+	Message   string    `json:"message"`
+	Data      Data      `json:"data,omitempty"`
+}
+
+type failure struct {
+	Error string `json:"logger_error"`
+	Data  string `json:"data"`
+}
+
+func (l *logger) Info(message string, data Data) {
+	l.write(Info, message, data)
+}
+
+func (l *logger) Debug(message string, data Data) {
+	l.write(Debug, message, data)
+}
+
+func (l *logger) write(level, message string, data Data) {
+	e := entry{
+		Level:     level,
+		Timestamp: time.Now().UTC(),
+		Message:   message,
+		Data:      l.mergedData(data),
+	}
+
+	if err := l.Encode(e); err != nil {
+		l.Encode(failure{
+			Error: err.Error(),
+			Data:  fmt.Sprintf("%#v", e.Data),
+		})
+	}
+}
+
+func (l *logger) mergedData(data Data) Data {
 	if l.defaults == nil || len(l.defaults) == 0 {
 		return data
 	}
@@ -58,15 +76,15 @@ func (l *logger) allData(data map[string]string) map[string]string {
 		return l.defaults
 	}
 
-	allData := make(map[string]string)
+	mergedData := make(Data)
 
 	for k, v := range l.defaults {
-		allData[k] = v
+		mergedData[k] = v
 	}
 
 	for k, v := range data {
-		allData[k] = v
+		mergedData[k] = v
 	}
 
-	return allData
+	return mergedData
 }
