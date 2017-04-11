@@ -18,7 +18,7 @@ func TestInfo(t *testing.T) {
 		data = Data{"test": "123", "test2": "1111"}
 	)
 
-	l.Info(msg, data)
+	l.InfoEx(msg, data)
 
 	assert.NoError(t, json.NewDecoder(&buf).Decode(&out))
 	assert.Equal(t, msg, out.Message)
@@ -37,7 +37,7 @@ func TestDebug(t *testing.T) {
 		data = Data{"test": "123", "test2": "1111"}
 	)
 
-	l.Debug(msg, data)
+	l.DebugEx(msg, data)
 
 	assert.NoError(t, json.NewDecoder(&buf).Decode(&out))
 	assert.Equal(t, msg, out.Message)
