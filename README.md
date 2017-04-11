@@ -1,3 +1,3 @@
-# logger
+# logged
 
 A Go logging package.
