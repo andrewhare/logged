@@ -49,6 +49,7 @@ func (s *serializer) write(e *entry) error {
 	}
 
 	s.WriteRune('}')
+	s.WriteRune('\n')
 	return s.Flush()
 }
 

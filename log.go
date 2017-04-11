@@ -13,8 +13,10 @@ const (
 type Data map[string]string
 
 type Log interface {
-	Info(message string, data Data) error
-	Debug(message string, data Data) error
+	Info(message string) error
+	InfoEx(message string, data Data) error
+	Debug(message string) error
+	DebugEx(message string, data Data) error
 	IsDebug() bool
 }
 
@@ -38,11 +40,19 @@ type log struct {
 	debugPackages []string
 }
 
-func (l *log) Info(message string, data Data) error {
+func (l *log) Info(message string) error {
+	return l.write(Info, message, nil)
+}
+
+func (l *log) InfoEx(message string, data Data) error {
 	return l.write(Info, message, data)
 }
 
-func (l *log) Debug(message string, data Data) error {
+func (l *log) Debug(message string) error {
+	return l.write(Debug, message, nil)
+}
+
+func (l *log) DebugEx(message string, data Data) error {
 	return l.write(Debug, message, data)
 }
 
