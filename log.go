@@ -66,20 +66,12 @@ func (l *log) IsDebug() bool {
 }
 
 func (l *log) write(level, message string, data Data) error {
-	entry := &entry{
+	return l.serializer.write(&entry{
 		Timestamp: time.Now().UTC().Format(time.RFC3339Nano),
 		Level:     level,
 		Message:   message,
 		Data:      l.mergedData(data),
-	}
-
-	l.mu.Lock()
-
-	err := l.serializer.write(entry)
-
-	l.mu.Unlock()
-
-	return err
+	})
 }
 
 func (l *log) mergedData(data Data) Data {

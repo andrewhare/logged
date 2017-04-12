@@ -3,6 +3,7 @@ package logged
 import (
 	"bufio"
 	"io"
+	"sync"
 	"unicode/utf8"
 )
 
@@ -23,9 +24,12 @@ func newSerializer(w io.Writer) *serializer {
 
 type serializer struct {
 	*bufio.Writer
+	mu sync.Mutex
 }
 
 func (s *serializer) write(e *entry) error {
+	s.mu.Lock()
+
 	s.WriteString(`{"timestamp":"`)
 	s.WriteString(e.Timestamp)
 	s.WriteString(`","level":"`)
@@ -50,7 +54,12 @@ func (s *serializer) write(e *entry) error {
 
 	s.WriteRune('}')
 	s.WriteRune('\n')
-	return s.Flush()
+
+	err := s.Flush()
+
+	s.mu.Unlock()
+
+	return err
 }
 
 func (s *serializer) writeJSONString(str string) {
