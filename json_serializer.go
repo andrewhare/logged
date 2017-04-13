@@ -10,17 +10,17 @@ import (
 var hex = "0123456789abcdef"
 
 func NewJSONSerializer(w io.Writer) Serializer {
-	return &serializer{
+	return &jsonSerializer{
 		w: bufio.NewWriter(w),
 	}
 }
 
-type serializer struct {
+type jsonSerializer struct {
 	w  *bufio.Writer
 	mu sync.Mutex
 }
 
-func (s *serializer) Write(e *Entry) error {
+func (s *jsonSerializer) Write(e *Entry) error {
 	s.mu.Lock()
 
 	s.w.WriteString(`{"timestamp":"`)
@@ -55,7 +55,7 @@ func (s *serializer) Write(e *Entry) error {
 	return err
 }
 
-func (s *serializer) writeJSONString(str string) {
+func (s *jsonSerializer) writeJSONString(str string) {
 	s.w.WriteByte('"')
 	start := 0
 	for i := 0; i < len(str); {
