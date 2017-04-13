@@ -1,11 +1,9 @@
 package logged
 
 import (
-	"bufio"
 	"bytes"
 	"encoding/json"
 	"io"
-	"sync"
 	"testing"
 	"time"
 
@@ -82,23 +80,16 @@ func BenchmarkJSONSerializer(b *testing.B) {
 
 func newStdlibJSONSerializer(w io.Writer) Serializer {
 	return &stdlibJSONSerializer{
-		w: bufio.NewWriter(w),
+		e: json.NewEncoder(w),
 	}
 }
 
 type stdlibJSONSerializer struct {
-	w  *bufio.Writer
-	mu sync.Mutex
+	e *json.Encoder
 }
 
 func (s *stdlibJSONSerializer) Write(e *Entry) error {
-	s.mu.Lock()
-
-	err := json.NewEncoder(s.w).Encode(e)
-
-	s.mu.Unlock()
-
-	return err
+	return s.e.Encode(e)
 }
 
 func BenchmarkStdlibJSONSerializer(b *testing.B) {
