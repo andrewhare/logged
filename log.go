@@ -53,6 +53,10 @@ func (l *log) IsDebug() bool {
 		return false
 	}
 
+	if l.debugPackages[0] == "*" {
+		return true
+	}
+
 	pc, _, _, _ := runtime.Caller(2)
 	funcName := runtime.FuncForPC(pc).Name()
 
