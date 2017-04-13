@@ -3,7 +3,6 @@ package logged
 import (
 	"bytes"
 	"encoding/json"
-	"io"
 	"testing"
 	"time"
 
@@ -78,24 +77,14 @@ func BenchmarkJSONSerializer(b *testing.B) {
 	}
 }
 
-func newStdlibJSONSerializer(w io.Writer) Serializer {
-	return &stdlibJSONSerializer{
-		e: json.NewEncoder(w),
-	}
-}
+type stdlibJSONSerializer struct{ e *json.Encoder }
 
-type stdlibJSONSerializer struct {
-	e *json.Encoder
-}
-
-func (s *stdlibJSONSerializer) Write(e *Entry) error {
-	return s.e.Encode(e)
-}
+func (s *stdlibJSONSerializer) Write(e *Entry) error { return s.e.Encode(e) }
 
 func BenchmarkStdlibJSONSerializer(b *testing.B) {
 	var (
 		buf bytes.Buffer
-		s   = newStdlibJSONSerializer(&buf)
+		s   = &stdlibJSONSerializer{json.NewEncoder(&buf)}
 		e   = &Entry{
 			Level:     "debug",
 			Timestamp: time.Now().UTC().Format(time.RFC3339Nano),
