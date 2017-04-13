@@ -50,6 +50,7 @@ func (l *log) Debug(message string, data Data) error {
 	if l.IsDebug() {
 		return l.write(Debug, message, data)
 	}
+	return nil
 }
 
 func (l *log) IsDebug() bool {
@@ -59,6 +60,7 @@ func (l *log) IsDebug() bool {
 
 	pc, _, _, _ := runtime.Caller(2)
 	funcName := runtime.FuncForPC(pc).Name()
+
 	for _, pkg := range l.debugPackages {
 		if strings.HasPrefix(funcName, pkg) {
 			return true

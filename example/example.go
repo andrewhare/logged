@@ -16,10 +16,10 @@ func main() {
 	})
 
 	// Log just a message
-	log.Info("an info message")
+	log.Info("an info message", nil)
 
 	// Log a message with extended data
-	log.InfoEx("an info message with data", logged.Data{
+	log.Info("an info message with data", logged.Data{
 		"some_number": "111",
 		"some_string": "abc",
 	})
@@ -27,8 +27,8 @@ func main() {
 	// Guard all debug statements to prevent expensive
 	// computation from running
 	if log.IsDebug() {
-		log.Debug("a debug message")
-		log.DebugEx("a debug message with data", logged.Data{
+		log.Debug("a debug message", nil)
+		log.Debug("a debug message with data", logged.Data{
 			"some_date": "Tue Apr 11 11:47:48 EDT 2017",
 		})
 	}

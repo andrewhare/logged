@@ -18,7 +18,7 @@ func TestInfo(t *testing.T) {
 		data = Data{"test": "123", "test2": "1111"}
 	)
 
-	l.InfoEx(msg, data)
+	l.Info(msg, data)
 
 	assert.NoError(t, json.NewDecoder(&buf).Decode(&out))
 	assert.Equal(t, msg, out.Message)
@@ -30,14 +30,17 @@ func TestInfo(t *testing.T) {
 func TestDebug(t *testing.T) {
 	var (
 		buf bytes.Buffer
-		l   = New(&Config{Writer: &buf})
+		l   = New(&Config{
+			Writer:        &buf,
+			DebugPackages: []string{"github.com/andrewhare/logged"},
+		})
 		out entry
 
 		msg  = "a test 123"
 		data = Data{"test": "123", "test2": "1111"}
 	)
 
-	l.DebugEx(msg, data)
+	l.Debug(msg, data)
 
 	assert.NoError(t, json.NewDecoder(&buf).Decode(&out))
 	assert.Equal(t, msg, out.Message)

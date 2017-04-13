@@ -18,44 +18,44 @@ type entry struct {
 
 func newSerializer(w io.Writer) *serializer {
 	return &serializer{
-		Writer: bufio.NewWriter(w),
+		w: bufio.NewWriter(w),
 	}
 }
 
 type serializer struct {
-	*bufio.Writer
+	w  *bufio.Writer
 	mu sync.Mutex
 }
 
 func (s *serializer) write(e *entry) error {
 	s.mu.Lock()
 
-	s.WriteString(`{"timestamp":"`)
-	s.WriteString(e.Timestamp)
-	s.WriteString(`","level":"`)
-	s.WriteString(e.Level)
-	s.WriteString(`","message":`)
+	s.w.WriteString(`{"timestamp":"`)
+	s.w.WriteString(e.Timestamp)
+	s.w.WriteString(`","level":"`)
+	s.w.WriteString(e.Level)
+	s.w.WriteString(`","message":`)
 	s.writeJSONString(e.Message)
 
 	if len(e.Data) > 0 {
-		s.WriteString(`,"data":{`)
+		s.w.WriteString(`,"data":{`)
 		first := true
 		for k, v := range e.Data {
 			if !first {
-				s.WriteRune(',')
+				s.w.WriteRune(',')
 			}
 			first = false
 			s.writeJSONString(k)
-			s.WriteRune(':')
+			s.w.WriteRune(':')
 			s.writeJSONString(v)
 		}
-		s.WriteRune('}')
+		s.w.WriteRune('}')
 	}
 
-	s.WriteRune('}')
-	s.WriteRune('\n')
+	s.w.WriteRune('}')
+	s.w.WriteRune('\n')
 
-	err := s.Flush()
+	err := s.w.Flush()
 
 	s.mu.Unlock()
 
@@ -63,7 +63,7 @@ func (s *serializer) write(e *entry) error {
 }
 
 func (s *serializer) writeJSONString(str string) {
-	s.WriteByte('"')
+	s.w.WriteByte('"')
 	start := 0
 	for i := 0; i < len(str); {
 		if b := str[i]; b < utf8.RuneSelf {
@@ -72,25 +72,25 @@ func (s *serializer) writeJSONString(str string) {
 				continue
 			}
 			if start < i {
-				s.WriteString(str[start:i])
+				s.w.WriteString(str[start:i])
 			}
 			switch b {
 			case '\\', '"':
-				s.WriteByte('\\')
-				s.WriteByte(b)
+				s.w.WriteByte('\\')
+				s.w.WriteByte(b)
 			case '\n':
-				s.WriteByte('\\')
-				s.WriteByte('n')
+				s.w.WriteByte('\\')
+				s.w.WriteByte('n')
 			case '\r':
-				s.WriteByte('\\')
-				s.WriteByte('r')
+				s.w.WriteByte('\\')
+				s.w.WriteByte('r')
 			case '\t':
-				s.WriteByte('\\')
-				s.WriteByte('t')
+				s.w.WriteByte('\\')
+				s.w.WriteByte('t')
 			default:
-				s.WriteString(`\u00`)
-				s.WriteByte(hex[b>>4])
-				s.WriteByte(hex[b&0xf])
+				s.w.WriteString(`\u00`)
+				s.w.WriteByte(hex[b>>4])
+				s.w.WriteByte(hex[b&0xf])
 			}
 			i++
 			start = i
@@ -99,9 +99,9 @@ func (s *serializer) writeJSONString(str string) {
 		c, size := utf8.DecodeRuneInString(str[i:])
 		if c == utf8.RuneError && size == 1 {
 			if start < i {
-				s.WriteString(str[start:i])
+				s.w.WriteString(str[start:i])
 			}
-			s.WriteString(`\ufffd`)
+			s.w.WriteString(`\ufffd`)
 			i += size
 			start = i
 			continue
@@ -109,7 +109,7 @@ func (s *serializer) writeJSONString(str string) {
 		i += size
 	}
 	if start < len(str) {
-		s.WriteString(str[start:])
+		s.w.WriteString(str[start:])
 	}
-	s.WriteByte('"')
+	s.w.WriteByte('"')
 }
