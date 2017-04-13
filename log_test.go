@@ -11,8 +11,8 @@ import (
 func TestInfo(t *testing.T) {
 	var (
 		buf bytes.Buffer
-		l   = New(&Config{Writer: &buf})
-		out entry
+		l   = New(&Config{Serializer: NewJSONSerializer(&buf)})
+		out Entry
 
 		msg  = "a test 123"
 		data = Data{"test": "123", "test2": "1111"}
@@ -31,10 +31,10 @@ func TestDebug(t *testing.T) {
 	var (
 		buf bytes.Buffer
 		l   = New(&Config{
-			Writer:        &buf,
+			Serializer:    NewJSONSerializer(&buf),
 			DebugPackages: []string{"github.com/andrewhare/logged"},
 		})
-		out entry
+		out Entry
 
 		msg  = "a test 123"
 		data = Data{"test": "123", "test2": "1111"}

@@ -1,7 +1,6 @@
 package logged
 
 import (
-	"io"
 	"runtime"
 	"strings"
 	"sync"
@@ -22,14 +21,14 @@ type Log interface {
 }
 
 type Config struct {
-	Writer        io.Writer
+	Serializer    Serializer
 	DebugPackages []string
 	Defaults      Data
 }
 
 func New(c *Config) Log {
 	return &log{
-		serializer:    newJSONSerializer(c.Writer),
+		serializer:    c.Serializer,
 		debugPackages: c.DebugPackages,
 		defaults:      c.Defaults,
 	}
@@ -37,7 +36,7 @@ func New(c *Config) Log {
 
 type log struct {
 	mu            sync.Mutex
-	serializer    *serializer
+	serializer    Serializer
 	defaults      Data
 	debugPackages []string
 }
@@ -71,7 +70,7 @@ func (l *log) IsDebug() bool {
 }
 
 func (l *log) write(level, message string, data Data) error {
-	return l.serializer.write(&entry{
+	return l.serializer.Write(&Entry{
 		Timestamp: time.Now().UTC().Format(time.RFC3339Nano),
 		Level:     level,
 		Message:   message,

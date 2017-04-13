@@ -8,7 +8,7 @@ import (
 
 func main() {
 	log := logged.New(&logged.Config{
-		Writer: os.Stdout,
+		Serializer: logged.NewJSONSerializer(os.Stdout),
 		Defaults: logged.Data{
 			"app_name": "fldsmdfr",
 			"version":  "1.2.3.4",
