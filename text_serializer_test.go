@@ -1,6 +1,7 @@
 package logged
 
 import (
+	"bytes"
 	"os"
 	"testing"
 	"time"
@@ -28,8 +29,9 @@ func TestTextSerializerNoData(t *testing.T) {
 
 func BenchmarkTextSerializer(b *testing.B) {
 	var (
-		s = NewTextSerializer(os.Stdout)
-		e = &Entry{
+		buf bytes.Buffer
+		s   = NewJSONSerializer(&buf)
+		e   = &Entry{
 			Level:     "debug",
 			Timestamp: time.Now().UTC().Format(time.RFC3339Nano),
 			Message:   "this is a test of the serializer for a message",

@@ -1,9 +1,11 @@
 package logged
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/json"
-	"os"
+	"io"
+	"sync"
 	"testing"
 	"time"
 
@@ -64,8 +66,46 @@ func TestJSONSerializerExtended(t *testing.T) {
 
 func BenchmarkJSONSerializer(b *testing.B) {
 	var (
-		s = NewJSONSerializer(os.Stdout)
-		e = &Entry{
+		buf bytes.Buffer
+		s   = NewJSONSerializer(&buf)
+		e   = &Entry{
+			Level:     "debug",
+			Timestamp: time.Now().UTC().Format(time.RFC3339Nano),
+			Message:   "this is a test of the serializer for a message",
+		}
+	)
+
+	for n := 0; n < b.N; n++ {
+		s.Write(e)
+	}
+}
+
+func newStdlibJSONSerializer(w io.Writer) Serializer {
+	return &stdlibJSONSerializer{
+		w: bufio.NewWriter(w),
+	}
+}
+
+type stdlibJSONSerializer struct {
+	w  *bufio.Writer
+	mu sync.Mutex
+}
+
+func (s *stdlibJSONSerializer) Write(e *Entry) error {
+	s.mu.Lock()
+
+	err := json.NewEncoder(s.w).Encode(e)
+
+	s.mu.Unlock()
+
+	return err
+}
+
+func BenchmarkStdlibJSONSerializer(b *testing.B) {
+	var (
+		buf bytes.Buffer
+		s   = newStdlibJSONSerializer(&buf)
+		e   = &Entry{
 			Level:     "debug",
 			Timestamp: time.Now().UTC().Format(time.RFC3339Nano),
 			Message:   "this is a test of the serializer for a message",
