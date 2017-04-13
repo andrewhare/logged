@@ -2,6 +2,8 @@ package logged
 
 import (
 	"io"
+	"runtime"
+	"strings"
 	"sync"
 	"time"
 )
@@ -14,10 +16,8 @@ const (
 type Data map[string]string
 
 type Log interface {
-	Info(message string) error
-	InfoEx(message string, data Data) error
-	Debug(message string) error
-	DebugEx(message string, data Data) error
+	Info(message string, data Data) error
+	Debug(message string, data Data) error
 	IsDebug() bool
 }
 
@@ -42,27 +42,30 @@ type log struct {
 	debugPackages []string
 }
 
-func (l *log) Info(message string) error {
-	return l.write(Info, message, nil)
-}
-
-func (l *log) InfoEx(message string, data Data) error {
+func (l *log) Info(message string, data Data) error {
 	return l.write(Info, message, data)
 }
 
-func (l *log) Debug(message string) error {
-	return l.write(Debug, message, nil)
-}
-
-func (l *log) DebugEx(message string, data Data) error {
-	return l.write(Debug, message, data)
+func (l *log) Debug(message string, data Data) error {
+	if l.IsDebug() {
+		return l.write(Debug, message, data)
+	}
 }
 
 func (l *log) IsDebug() bool {
 	if len(l.debugPackages) == 0 {
 		return false
 	}
-	return true
+
+	pc, _, _, _ := runtime.Caller(2)
+	funcName := runtime.FuncForPC(pc).Name()
+	for _, pkg := range l.debugPackages {
+		if strings.HasPrefix(funcName, pkg) {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (l *log) write(level, message string, data Data) error {
