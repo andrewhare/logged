@@ -3,7 +3,6 @@ package logged
 import (
 	"runtime"
 	"strings"
-	"sync"
 	"time"
 )
 
@@ -33,7 +32,6 @@ func New(c *Config) Log {
 }
 
 type log struct {
-	mu            sync.Mutex
 	serializer    Serializer
 	defaults      map[string]string
 	debugPackages []string
