@@ -10,10 +10,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSerializer(t *testing.T) {
+func TestJSONSerializer(t *testing.T) {
 	var (
 		buf bytes.Buffer
-		s   = newSerializer(&buf)
+		s   = newJSONSerializer(&buf)
 		e   = &entry{Timestamp: "rightnow", Level: "somelevel", Message: "test123", Data: Data{"test": "123", "test2": "345"}}
 		out entry
 	)
@@ -23,10 +23,10 @@ func TestSerializer(t *testing.T) {
 	assert.Equal(t, e, &out)
 }
 
-func TestSerializerNoData(t *testing.T) {
+func TestJSONSerializerNoData(t *testing.T) {
 	var (
 		buf bytes.Buffer
-		s   = newSerializer(&buf)
+		s   = newJSONSerializer(&buf)
 		e   = &entry{Timestamp: "sometimelater", Level: "otherlevel", Message: "345test"}
 		out entry
 	)
@@ -36,10 +36,10 @@ func TestSerializerNoData(t *testing.T) {
 	assert.Equal(t, e, &out)
 }
 
-func TestSerializerBadChars(t *testing.T) {
+func TestJSONSerializerBadChars(t *testing.T) {
 	var (
 		buf bytes.Buffer
-		s   = newSerializer(&buf)
+		s   = newJSONSerializer(&buf)
 		e   = &entry{Timestamp: "sometimelater", Level: "otherlevel", Message: "\" \\ \b \f \n \r \t"}
 		out entry
 	)
@@ -49,10 +49,10 @@ func TestSerializerBadChars(t *testing.T) {
 	assert.Equal(t, e, &out)
 }
 
-func TestSerializerExtended(t *testing.T) {
+func TestJSONSerializerExtended(t *testing.T) {
 	var (
 		buf bytes.Buffer
-		s   = newSerializer(&buf)
+		s   = newJSONSerializer(&buf)
 		e   = &entry{Timestamp: "sometimelater", Level: "otherlevel", Message: "Hello, 世界 √ 😂 \ufffd"}
 		out entry
 	)
@@ -62,9 +62,9 @@ func TestSerializerExtended(t *testing.T) {
 	assert.Equal(t, e, &out)
 }
 
-func BenchmarkSerializer(b *testing.B) {
+func BenchmarkJSONSerializer(b *testing.B) {
 	var (
-		s = newSerializer(os.Stdout)
+		s = newJSONSerializer(os.Stdout)
 		e = &entry{
 			Level:     "debug",
 			Timestamp: time.Now().UTC().Format(time.RFC3339Nano),

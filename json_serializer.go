@@ -16,7 +16,7 @@ type entry struct {
 	Data      Data   `json:"data"`
 }
 
-func newSerializer(w io.Writer) *serializer {
+func newJSONSerializer(w io.Writer) *serializer {
 	return &serializer{
 		w: bufio.NewWriter(w),
 	}

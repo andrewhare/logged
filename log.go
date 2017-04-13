@@ -29,7 +29,7 @@ type Config struct {
 
 func New(c *Config) Log {
 	return &log{
-		serializer:    newSerializer(c.Writer),
+		serializer:    newJSONSerializer(c.Writer),
 		debugPackages: c.DebugPackages,
 		defaults:      c.Defaults,
 	}
