@@ -14,7 +14,7 @@ func TestJSONSerializer(t *testing.T) {
 	var (
 		buf bytes.Buffer
 		s   = NewJSONSerializer(&buf)
-		e   = &Entry{Timestamp: "rightnow", Level: "somelevel", Message: "test123", Data: Data{"test": "123", "test2": "345"}}
+		e   = &Entry{Timestamp: "rightnow", Level: "somelevel", Message: "test123", Data: map[string]string{"test": "123", "test2": "345"}}
 		out Entry
 	)
 

@@ -11,7 +11,7 @@ import (
 func TestTextSerializer(t *testing.T) {
 	var (
 		s = NewTextSerializer(os.Stdout)
-		e = &Entry{Timestamp: "rightnow", Level: "somelevel", Message: "test123", Data: Data{"test": "123", "test2": "345"}}
+		e = &Entry{Timestamp: "rightnow", Level: "somelevel", Message: "test123", Data: map[string]string{"test": "123", "test2": "345"}}
 	)
 
 	assert.NoError(t, s.Write(e))

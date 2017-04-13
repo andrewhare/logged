@@ -12,18 +12,16 @@ const (
 	Debug = "debug"
 )
 
-type Data map[string]string
-
 type Log interface {
-	Info(message string, data Data) error
-	Debug(message string, data Data) error
+	Info(message string, data map[string]string) error
+	Debug(message string, data map[string]string) error
 	IsDebug() bool
 }
 
 type Config struct {
 	Serializer    Serializer
 	DebugPackages []string
-	Defaults      Data
+	Defaults      map[string]string
 }
 
 func New(c *Config) Log {
@@ -37,15 +35,15 @@ func New(c *Config) Log {
 type log struct {
 	mu            sync.Mutex
 	serializer    Serializer
-	defaults      Data
+	defaults      map[string]string
 	debugPackages []string
 }
 
-func (l *log) Info(message string, data Data) error {
+func (l *log) Info(message string, data map[string]string) error {
 	return l.write(Info, message, data)
 }
 
-func (l *log) Debug(message string, data Data) error {
+func (l *log) Debug(message string, data map[string]string) error {
 	if l.IsDebug() {
 		return l.write(Debug, message, data)
 	}
@@ -69,7 +67,7 @@ func (l *log) IsDebug() bool {
 	return false
 }
 
-func (l *log) write(level, message string, data Data) error {
+func (l *log) write(level, message string, data map[string]string) error {
 	return l.serializer.Write(&Entry{
 		Timestamp: time.Now().UTC().Format(time.RFC3339Nano),
 		Level:     level,
@@ -78,7 +76,7 @@ func (l *log) write(level, message string, data Data) error {
 	})
 }
 
-func (l *log) mergedData(data Data) Data {
+func (l *log) mergedData(data map[string]string) map[string]string {
 	if l.defaults == nil || len(l.defaults) == 0 {
 		return data
 	}
@@ -87,7 +85,7 @@ func (l *log) mergedData(data Data) Data {
 		return l.defaults
 	}
 
-	merged := make(Data)
+	merged := make(map[string]string)
 	for k, v := range l.defaults {
 		merged[k] = v
 	}

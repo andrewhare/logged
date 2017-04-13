@@ -15,7 +15,7 @@ func TestInfo(t *testing.T) {
 		out Entry
 
 		msg  = "a test 123"
-		data = Data{"test": "123", "test2": "1111"}
+		data = map[string]string{"test": "123", "test2": "1111"}
 	)
 
 	l.Info(msg, data)
@@ -37,7 +37,7 @@ func TestDebug(t *testing.T) {
 		out Entry
 
 		msg  = "a test 123"
-		data = Data{"test": "123", "test2": "1111"}
+		data = map[string]string{"test": "123", "test2": "1111"}
 	)
 
 	l.Debug(msg, data)
@@ -51,7 +51,7 @@ func TestDebug(t *testing.T) {
 
 func TestMergedDataNoDefaults(t *testing.T) {
 	var (
-		data = Data{"one": "1"}
+		data = map[string]string{"one": "1"}
 		l    = &log{}
 	)
 
@@ -61,7 +61,7 @@ func TestMergedDataNoDefaults(t *testing.T) {
 
 func TestMergedDataNoData(t *testing.T) {
 	var (
-		defaults = Data{"one": "1"}
+		defaults = map[string]string{"one": "1"}
 		l        = &log{defaults: defaults}
 	)
 
@@ -70,9 +70,9 @@ func TestMergedDataNoData(t *testing.T) {
 
 func TestMergedData(t *testing.T) {
 	var (
-		defaults = Data{"one": "1"}
-		data     = Data{"two": "2"}
-		out      = Data{"one": "1", "two": "2"}
+		defaults = map[string]string{"one": "1"}
+		data     = map[string]string{"two": "2"}
+		out      = map[string]string{"one": "1", "two": "2"}
 		l        = &log{defaults: defaults}
 	)
 
@@ -81,8 +81,8 @@ func TestMergedData(t *testing.T) {
 
 func TestMergedDataOverwriteDefaults(t *testing.T) {
 	var (
-		defaults = Data{"one": "1"}
-		data     = Data{"one": "111"}
+		defaults = map[string]string{"one": "1"}
+		data     = map[string]string{"one": "111"}
 		l        = &log{defaults: defaults}
 	)
 
