@@ -2,7 +2,7 @@
 
 A simple Go logging package inspired by [Dave Cheney's discussion on logging](https://dave.cheney.net/2015/11/05/lets-talk-about-logging).
 
-GoDoc: https://godoc.org/github.com/andrewhare/logged
+GoDoc: https://godoc.org/github.com/andrewhare/logged  
 Go Report Card: https://goreportcard.com/report/github.com/andrewhare/logged
 
 # Installation
