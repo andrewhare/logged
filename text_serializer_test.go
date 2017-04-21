@@ -12,7 +12,7 @@ import (
 func TestTextSerializer(t *testing.T) {
 	var (
 		s = NewTextSerializer(os.Stdout)
-		e = &Entry{Timestamp: "rightnow", Level: "somelevel", Message: "test123", Data: map[string]string{"test": "123", "test2": "345"}}
+		e = &Entry{Timestamp: time.Now().UTC().Format(time.RFC3339Nano), Level: "somelevel", Message: "test123", Data: map[string]string{"test": "123", "test2": "345"}}
 	)
 
 	assert.NoError(t, s.Write(e))
@@ -21,7 +21,7 @@ func TestTextSerializer(t *testing.T) {
 func TestTextSerializerNoData(t *testing.T) {
 	var (
 		s = NewTextSerializer(os.Stdout)
-		e = &Entry{Timestamp: "sometimelater", Level: "otherlevel", Message: "345test"}
+		e = &Entry{Timestamp: time.Now().UTC().Format(time.RFC3339Nano), Level: "otherlevel", Message: "345test"}
 	)
 
 	assert.NoError(t, s.Write(e))

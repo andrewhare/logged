@@ -27,6 +27,8 @@ func (s *textSerializer) Write(e *Entry) error {
 
 	s.w.WriteString(e.Timestamp)
 
+	s.w.WriteRune(' ')
+
 	s.w.WriteString(e.Message)
 
 	s.w.WriteRune(' ')
