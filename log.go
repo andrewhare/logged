@@ -7,11 +7,15 @@ import (
 )
 
 const (
+	// Error log level
 	Error = "error"
-	Info  = "info"
+	// Info log level
+	Info = "info"
+	// Debug log level
 	Debug = "debug"
 )
 
+// Log provides functions to write messages and data to an output
 type Log interface {
 	Error(err error, data map[string]string) error
 	Info(message string, data map[string]string) error
@@ -19,12 +23,14 @@ type Log interface {
 	IsDebug() bool
 }
 
+// Config is a struct used to initialize a Log
 type Config struct {
 	Serializer    Serializer
 	DebugPackages []string
 	Defaults      map[string]string
 }
 
+// New creates a new Log
 func New(c *Config) Log {
 	return &log{
 		serializer:    c.Serializer,
@@ -39,14 +45,17 @@ type log struct {
 	debugPackages []string
 }
 
+// Error writes a log entry at the Error level
 func (l *log) Error(err error, data map[string]string) error {
 	return l.write(Error, err.Error(), data)
 }
 
+// Info writes a log entry at the Info level
 func (l *log) Info(message string, data map[string]string) error {
 	return l.write(Info, message, data)
 }
 
+// Debug writes a log entry at the Debug level if IsDebug
 func (l *log) Debug(message string, data map[string]string) error {
 	if l.IsDebug() {
 		return l.write(Debug, message, data)
@@ -54,6 +63,7 @@ func (l *log) Debug(message string, data map[string]string) error {
 	return nil
 }
 
+// IsDebug determines if the log is configured to write debug entries
 func (l *log) IsDebug() bool {
 	if len(l.debugPackages) == 0 {
 		return false

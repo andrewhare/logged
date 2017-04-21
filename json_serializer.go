@@ -9,6 +9,8 @@ import (
 
 var hex = "0123456789abcdef"
 
+// Create a new Serializer that writes to the underlying io.Writer
+// in a JSON format.
 func NewJSONSerializer(w io.Writer) Serializer {
 	return &jsonSerializer{
 		w: bufio.NewWriter(w),
@@ -20,6 +22,7 @@ type jsonSerializer struct {
 	mu sync.Mutex
 }
 
+// Write flushes e to the underlying io.Writer in a JSON format.
 func (s *jsonSerializer) Write(e *Entry) error {
 	s.mu.Lock()
 

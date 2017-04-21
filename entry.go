@@ -1,5 +1,6 @@
 package logged
 
+// Entry represents a single line in the log.
 type Entry struct {
 	Timestamp string            `json:"timestamp"`
 	Level     string            `json:"level"`

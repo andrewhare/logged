@@ -6,6 +6,8 @@ import (
 	"sync"
 )
 
+// Create a new Serializer that writes to the underlying io.Writer
+// in a text format.
 func NewTextSerializer(w io.Writer) Serializer {
 	return &textSerializer{
 		w: bufio.NewWriter(w),
@@ -17,6 +19,7 @@ type textSerializer struct {
 	mu sync.Mutex
 }
 
+// Write flushes e to the underlying io.Writer in a text format.
 func (s *textSerializer) Write(e *Entry) error {
 	s.mu.Lock()
 
