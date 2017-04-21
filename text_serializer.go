@@ -20,13 +20,12 @@ type textSerializer struct {
 func (s *textSerializer) Write(e *Entry) error {
 	s.mu.Lock()
 
-	s.w.WriteString(e.Timestamp)
-
-	s.w.WriteRune(' ')
 	s.w.WriteRune('[')
 	s.w.WriteString(e.Level)
 	s.w.WriteRune(']')
 	s.w.WriteRune(' ')
+
+	s.w.WriteString(e.Timestamp)
 
 	s.w.WriteString(e.Message)
 
