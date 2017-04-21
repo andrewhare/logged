@@ -6,7 +6,7 @@ import (
 	"sync"
 )
 
-// Create a new Serializer that writes to the underlying io.Writer
+// NewTextSerializer creates a new Serializer that writes to the underlying io.Writer
 // in a text format.
 func NewTextSerializer(w io.Writer) Serializer {
 	return &textSerializer{

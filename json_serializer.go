@@ -9,7 +9,7 @@ import (
 
 var hex = "0123456789abcdef"
 
-// Create a new Serializer that writes to the underlying io.Writer
+// NewJSONSerializer creates a new Serializer that writes to the underlying io.Writer
 // in a JSON format.
 func NewJSONSerializer(w io.Writer) Serializer {
 	return &jsonSerializer{
