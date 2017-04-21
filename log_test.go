@@ -3,6 +3,7 @@ package logged
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -15,10 +16,11 @@ func TestError(t *testing.T) {
 		out Entry
 
 		msg  = "a test 123"
+		err  = errors.New(msg)
 		data = map[string]string{"test": "123", "test2": "1111"}
 	)
 
-	l.Error(msg, data)
+	l.Error(err, data)
 
 	assert.NoError(t, json.NewDecoder(&buf).Decode(&out))
 	assert.Equal(t, msg, out.Message)

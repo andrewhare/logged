@@ -13,7 +13,7 @@ const (
 )
 
 type Log interface {
-	Error(message string, data map[string]string) error
+	Error(err error, data map[string]string) error
 	Info(message string, data map[string]string) error
 	Debug(message string, data map[string]string) error
 	IsDebug() bool
@@ -39,8 +39,8 @@ type log struct {
 	debugPackages []string
 }
 
-func (l *log) Error(message string, data map[string]string) error {
-	return l.write(Error, message, data)
+func (l *log) Error(err error, data map[string]string) error {
+	return l.write(Error, err.Error(), data)
 }
 
 func (l *log) Info(message string, data map[string]string) error {
