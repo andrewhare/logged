@@ -7,11 +7,13 @@ import (
 )
 
 const (
+	Error = "error"
 	Info  = "info"
 	Debug = "debug"
 )
 
 type Log interface {
+	Error(message string, data map[string]string) error
 	Info(message string, data map[string]string) error
 	Debug(message string, data map[string]string) error
 	IsDebug() bool
@@ -35,6 +37,10 @@ type log struct {
 	serializer    Serializer
 	defaults      map[string]string
 	debugPackages []string
+}
+
+func (l *log) Error(message string, data map[string]string) error {
+	return l.write(Error, message, data)
 }
 
 func (l *log) Info(message string, data map[string]string) error {
