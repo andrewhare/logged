@@ -96,7 +96,7 @@ log.Debug("something happened", map[string]string{
 	"cheap_data": "abc123",
 })
 
-// If there is expesive computations, use IsDebug
+// If there are expensive computations, use IsDebug
 if log.IsDebug() {
 	log.Debug("something else happened", map[string]string{
 		"expensive_data": someExpensiveFunc(),
@@ -109,4 +109,16 @@ If you don't need to pass data, just pass `nil`:
 ```go
 log.Info("an event", nil)
 ```
+
+# Why another logging package?
+
+Logged is designed to be extremely fast:
+
+* A custom JSON serializer is provided that uses no reflection. 
+* Key/value data must be a string which means that the serializer doesn't have to use reflection to write to the underlying writer.
+
+Logged is designed to be minimalist:
+
+* Only three log levels are provided.
+* The `Log` interface provides only four functions - there is no extensive DSL or API to learn.
 
