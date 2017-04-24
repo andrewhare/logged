@@ -3,31 +3,10 @@ package logged
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
-
-func TestError(t *testing.T) {
-	var (
-		buf bytes.Buffer
-		l   = New(&Config{Serializer: NewJSONSerializer(&buf)})
-		out Entry
-
-		msg  = "a test 123"
-		err  = errors.New(msg)
-		data = map[string]string{"test": "123", "test2": "1111"}
-	)
-
-	l.Error(err, data)
-
-	assert.NoError(t, json.NewDecoder(&buf).Decode(&out))
-	assert.Equal(t, msg, out.Message)
-	assert.Equal(t, Error, out.Level)
-	assert.NotEmpty(t, out.Timestamp)
-	assert.Equal(t, data, out.Data)
-}
 
 func TestInfo(t *testing.T) {
 	var (

@@ -74,13 +74,12 @@ log := logged.New(&logged.Config{
 
 # Levels
 
-A log has three levels: error, info, and debug. Error and info are synonymous except for the level they are written at which make it possible to parse errors from the log output.
+A log has two levels: info and debug. Info should be used for actionable entries, debug should be used for everything else and can be disblaed on a per-package level.
 
 The `Log` interface is very simple:
 
 ```go
 type Log interface {
-	Error(err error, data map[string]string) error
 	Info(message string, data map[string]string) error
 	Debug(message string, data map[string]string) error
 	IsDebug() bool

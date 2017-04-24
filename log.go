@@ -7,8 +7,6 @@ import (
 )
 
 const (
-	// Error log level
-	Error = "error"
 	// Info log level
 	Info = "info"
 	// Debug log level
@@ -17,7 +15,6 @@ const (
 
 // Log provides functions to write messages and data to an output
 type Log interface {
-	Error(err error, data map[string]string) error
 	Info(message string, data map[string]string) error
 	Debug(message string, data map[string]string) error
 	IsDebug() bool
@@ -43,11 +40,6 @@ type log struct {
 	serializer    Serializer
 	defaults      map[string]string
 	debugPackages []string
-}
-
-// Error writes a log entry at the Error level
-func (l *log) Error(err error, data map[string]string) error {
-	return l.write(Error, err.Error(), data)
 }
 
 // Info writes a log entry at the Info level
