@@ -20,19 +20,23 @@ type Log interface {
 	IsDebug() bool
 }
 
-// Config is a struct used to initialize a Log
-type Config struct {
-	Serializer    Serializer
+// Opts is a struct used provide optional values to the log
+type Opts struct {
 	DebugPackages []string
 	Defaults      map[string]string
 }
 
 // New creates a new Log
-func New(c *Config) Log {
+func New(s Serializer) Log {
+	return &log{serializer: s}
+}
+
+// NewOpts creates a new log with options
+func NewOpts(s Serializer, o Opts) Log {
 	return &log{
-		serializer:    c.Serializer,
-		debugPackages: c.DebugPackages,
-		defaults:      c.Defaults,
+		serializer:    s,
+		debugPackages: o.DebugPackages,
+		defaults:      o.Defaults,
 	}
 }
 

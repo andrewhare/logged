@@ -11,7 +11,7 @@ import (
 func TestInfo(t *testing.T) {
 	var (
 		buf bytes.Buffer
-		l   = New(&Config{Serializer: NewJSONSerializer(&buf)})
+		l   = New(NewJSONSerializer(&buf))
 		out Entry
 
 		msg  = "a test 123"
@@ -30,8 +30,7 @@ func TestInfo(t *testing.T) {
 func TestDebug(t *testing.T) {
 	var (
 		buf bytes.Buffer
-		l   = New(&Config{
-			Serializer:    NewJSONSerializer(&buf),
+		l   = NewOpts(NewJSONSerializer(&buf), Opts{
 			DebugPackages: []string{"github.com/andrewhare/logged"},
 		})
 		out Entry

@@ -22,14 +22,10 @@ The log can be configured with either a JSON or text serializer that write to an
 
 ```go
 // JSON
-log := logged.New(&logged.Config{
-	Serializer: logged.NewJSONSerializer(os.Stdout),
-})
+log := logged.New(logged.NewJSONSerializer(os.Stdout))
 
 // Text
-log := logged.New(&logged.Config{
-	Serializer: logged.NewTextSerializer(os.Stdout),
-})
+log := logged.New(logged.NewTextSerializer(os.Stdout))
 ```
 
 If you want to write a custom format, you only need to implement the `Serializer` interface:
@@ -45,8 +41,7 @@ type Serializer interface {
 The log is designed to write metadata as a set of key/value pairs. This means that each log write can be optionally accompanied by a `map[string]string` that will be written with the message. Often times, there is certain data that should be written out with every write by default. You can specify the default data when you create the log:
 
 ```go
-log := logged.New(&logged.Config{
-	Serializer: logged.NewJSONSerializer(os.Stdout),
+log := logged.NewOpts(logged.NewJSONSerializer(os.Stdout), logged.Opts{
 	Defaults: map[string]string{
 		"app_name": "fldsmdfr",
 		"version":  "1.0.0",
@@ -60,14 +55,12 @@ Logged allows you to specific only certain packages to write debug logs. By pass
 
 ```go
 // Only allow github.com/foo/bar to write debug logs
-log := logged.New(&logged.Config{
-	Serializer: logged.NewJSONSerializer(os.Stdout),
+log := logged.New(logged.NewJSONSerializer(os.Stdout), logged.Opts{
 	DebugPackages: []string{"github.com/foo/bar"},
 })
 
 // Allow all packages to write debug logs
-log := logged.New(&logged.Config{
-	Serializer: logged.NewJSONSerializer(os.Stdout),
+log := logged.New(logged.NewJSONSerializer(os.Stdout), logged.Opts{
 	DebugPackages: []string{"*"},
 })
 ```
