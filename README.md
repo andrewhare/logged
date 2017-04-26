@@ -65,6 +65,18 @@ log := logged.New(logged.NewJSONSerializer(os.Stdout), logged.Opts{
 })
 ```
 
+### Spawning a sub-log
+
+A log can be used to spawn a sub-log with all default metadata merged together:
+
+```go
+subLog := log.New(map[string]string{
+	"default_for_subLog": "1234",
+})
+```
+
+Now `subLog` can be used and the original defaults will be written out with every entry in addition to the defaults passed to `log.New`.
+
 # Levels
 
 A log has two levels: info and debug. Info should be used for actionable entries, debug should be used for everything else and can be disblaed on a per-package level.
