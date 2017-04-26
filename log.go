@@ -17,7 +17,9 @@ const (
 type Log interface {
 	Info(message string, data map[string]string) error
 	Debug(message string, data map[string]string) error
+
 	IsDebug() bool
+	New(data map[string]string) Log
 }
 
 // Opts is a struct used provide optional values to the log
@@ -79,6 +81,14 @@ func (l *log) IsDebug() bool {
 	}
 
 	return false
+}
+
+func (l *log) New(data map[string]string) Log {
+	return &log{
+		serializer:    l.serializer,
+		defaults:      l.mergedData(data),
+		debugPackages: l.debugPackages,
+	}
 }
 
 func (l *log) write(level, message string, data map[string]string) error {

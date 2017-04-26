@@ -87,3 +87,14 @@ func TestMergedDataOverwriteDefaults(t *testing.T) {
 
 	assert.Equal(t, data, l.mergedData(data))
 }
+
+func TestLogNew(t *testing.T) {
+	var (
+		l           = &log{defaults: map[string]string{"one": "1"}}
+		newDefaults = map[string]string{"two": "2"}
+		data        = map[string]string{"three": "3"}
+		out         = map[string]string{"one": "1", "two": "2", "three": "3"}
+	)
+
+	assert.Equal(t, out, l.New(newDefaults).(*log).mergedData(data))
+}
