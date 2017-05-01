@@ -85,9 +85,13 @@ The `Log` interface is very simple:
 
 ```go
 type Log interface {
-	Info(message string, data map[string]string) error
-	Debug(message string, data map[string]string) error
+	Info(message string, data ...map[string]string) error
+	InfoError(err error, data ...map[string]string) error
+	Debug(message string, data ...map[string]string) error
+	DebugError(err error, data ...map[string]string) error
+
 	IsDebug() bool
+	New(data map[string]string) Log
 }
 ```
 
@@ -108,11 +112,20 @@ if log.IsDebug() {
 }
 ```
 
-If you don't need to pass data, just pass `nil`:
+If you don't need to pass data, just pass nothing:
 
 ```go
-log.Info("an event", nil)
+log.Info("an event")
 ```
+
+There are `error` equivalent functions on `Log` as well:
+
+```go
+log.InfoError(err, map[string]string{"some_key": "some_val"})
+
+log.DebugError(err, map[string]string{"some_key": "some_val"})
+```
+
 
 # Why another logging package?
 

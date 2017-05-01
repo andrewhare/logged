@@ -3,6 +3,8 @@ package logged
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -54,7 +56,7 @@ func TestMergedDataNoDefaults(t *testing.T) {
 		l    = &log{}
 	)
 
-	assert.Nil(t, l.mergedData(nil))
+	assert.Empty(t, l.mergedData(nil))
 	assert.Equal(t, data, l.mergedData(data))
 }
 
@@ -97,4 +99,28 @@ func TestLogNew(t *testing.T) {
 	)
 
 	assert.Equal(t, out, l.New(newDefaults).(*log).mergedData(data))
+}
+
+func TestAPI(t *testing.T) {
+	ser := NewJSONSerializer(os.Stdout)
+	log := NewOpts(ser, Opts{
+		Defaults:      map[string]string{"a": "1"},
+		DebugPackages: []string{"github.com/andrewhare/logged"},
+	})
+
+	log.Info("test")
+	log.Info("test", map[string]string{"b": "2"})
+	log.Info("test", map[string]string{"b": "2"}, map[string]string{"c": "3"})
+
+	log.InfoError(fmt.Errorf("boom"))
+	log.InfoError(fmt.Errorf("boom"), map[string]string{"b": "2"})
+	log.InfoError(fmt.Errorf("boom"), map[string]string{"b": "2"}, map[string]string{"c": "3"})
+
+	log.Debug("test")
+	log.Debug("test", map[string]string{"b": "2"})
+	log.Debug("test", map[string]string{"b": "2"}, map[string]string{"c": "3"})
+
+	log.DebugError(fmt.Errorf("boom"))
+	log.DebugError(fmt.Errorf("boom"), map[string]string{"b": "2"})
+	log.DebugError(fmt.Errorf("boom"), map[string]string{"b": "2"}, map[string]string{"c": "3"})
 }
